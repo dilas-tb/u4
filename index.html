@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Ma famille – Vokabelübersicht</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: #fff7f0;
+    color: #4a1a1a;
+    margin: 2em;
+  }
+  h1 {
+    color: #8b0000;
+    text-align: center;
+    border-bottom: 3px solid #ff8c42;
+    padding-bottom: 0.5em;
+  }
+  h2 {
+    color: #8b0000;
+    margin-top: 2em;
+    border-left: 6px solid #ff8c42;
+    padding-left: 0.5em;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(139,0,0,0.15);
+  }
+  th {
+    background-color: #ff8c42;
+    color: #fff;
+    padding: 0.7em;
+    text-align: left;
+  }
+  td {
+    padding: 0.6em 0.8em;
+    border-bottom: 1px solid #ffd9b8;
+    vertical-align: middle;
+  }
+  tr:nth-child(even) td {
+    background-color: #fff2e5;
+  }
+  tr:hover td {
+    background-color: #ffe0c2;
+  }
+  .fr {
+    font-weight: bold;
+    color: #8b0000;
+  }
+  button.speak {
+    background-color: #8b0000;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    margin-left: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+  }
+  button.speak:hover {
+    background-color: #ff8c42;
+  }
+  .example {
+    font-style: italic;
+    color: #5a2a2a;
+  }
+  footer {
+    text-align: center;
+    margin-top: 2em;
+    font-size: 0.85em;
+    color: #8b0000;
+  }
+</style>
+</head>
+<body>
+
+<h1>Ma famille</h1>
+
+<h2>Unité 4A</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Deutsch</th>
+      <th>Französisch</th>
+      <th>Beispielsatz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>eine Mutter</td>
+      <td><span class="fr">une mère</span><button class="speak" onclick="speak('une mère')">🔊</button></td>
+      <td><span class="example">Ma mère est gentille.</span><button class="speak" onclick="speak('Ma mère est gentille.')">🔊</button><br>Meine Mutter ist nett.</td>
+    </tr>
+    <tr>
+      <td>ein Vater</td>
+      <td><span class="fr">un père</span><button class="speak" onclick="speak('un père')">🔊</button></td>
+      <td><span class="example">Mon père travaille.</span><button class="speak" onclick="speak('Mon père travaille.')">🔊</button><br>Mein Vater arbeitet.</td>
+    </tr>
+    <tr>
+      <td>eine Stiefmutter</td>
+      <td><span class="fr">une belle-mère</span><button class="speak" onclick="speak('une belle-mère')">🔊</button></td>
+      <td><span class="example">Ma belle-mère est sympa.</span><button class="speak" onclick="speak('Ma belle-mère est sympa.')">🔊</button><br>Meine Stiefmutter ist sympathisch.</td>
+    </tr>
+    <tr>
+      <td>ein Stiefvater</td>
+      <td><span class="fr">un beau-père</span><button class="speak" onclick="speak('un beau-père')">🔊</button></td>
+      <td><span class="example">Mon beau-père cuisine bien.</span><button class="speak" onclick="speak('Mon beau-père cuisine bien.')">🔊</button><br>Mein Stiefvater kocht gut.</td>
+    </tr>
+    <tr>
+      <td>eine Oma</td>
+      <td><span class="fr">une grand-mère</span><button class="speak" onclick="speak('une grand-mère')">🔊</button></td>
+      <td><span class="example">Ma grand-mère habite à Paris.</span><button class="speak" onclick="speak('Ma grand-mère habite à Paris.')">🔊</button><br>Meine Oma wohnt in Paris.</td>
+    </tr>
+    <tr>
+      <td>ein Opa</td>
+      <td><span class="fr">un grand-père</span><button class="speak" onclick="speak('un grand-père')">🔊</button></td>
+      <td><span class="example">Mon grand-père a un chien.</span><button class="speak" onclick="speak('Mon grand-père a un chien.')">🔊</button><br>Mein Opa hat einen Hund.</td>
+    </tr>
+    <tr>
+      <td>eine Schwester</td>
+      <td><span class="fr">une sœur</span><button class="speak" onclick="speak('une sœur')">🔊</button></td>
+      <td><span class="example">Ma sœur est petite.</span><button class="speak" onclick="speak('Ma sœur est petite.')">🔊</button><br>Meine Schwester ist klein.</td>
+    </tr>
+    <tr>
+      <td>ein Bruder</td>
+      <td><span class="fr">un frère</span><button class="speak" onclick="speak('un frère')">🔊</button></td>
+      <td><span class="example">Mon frère joue au foot.</span><button class="speak" onclick="speak('Mon frère joue au foot.')">🔊</button><br>Mein Bruder spielt Fußball.</td>
+    </tr>
+    <tr>
+      <td>eine Halbschwester</td>
+      <td><span class="fr">une demi-sœur</span><button class="speak" onclick="speak('une demi-sœur')">🔊</button></td>
+      <td><span class="example">J'ai une demi-sœur.</span><button class="speak" onclick="speak('J\'ai une demi-sœur.')">🔊</button><br>Ich habe eine Halbschwester.</td>
+    </tr>
+    <tr>
+      <td>ein Halbbruder</td>
+      <td><span class="fr">un demi-frère</span><button class="speak" onclick="speak('un demi-frère')">🔊</button></td>
+      <td><span class="example">Mon demi-frère est drôle.</span><button class="speak" onclick="speak('Mon demi-frère est drôle.')">🔊</button><br>Mein Halbbruder ist lustig.</td>
+    </tr>
+    <tr>
+      <td>eine Tante</td>
+      <td><span class="fr">une tante</span><button class="speak" onclick="speak('une tante')">🔊</button></td>
+      <td><span class="example">Ma tante adore le chocolat.</span><button class="speak" onclick="speak('Ma tante adore le chocolat.')">🔊</button><br>Meine Tante liebt Schokolade.</td>
+    </tr>
+    <tr>
+      <td>ein Onkel</td>
+      <td><span class="fr">un oncle</span><button class="speak" onclick="speak('un oncle')">🔊</button></td>
+      <td><span class="example">Mon oncle est drôle.</span><button class="speak" onclick="speak('Mon oncle est drôle.')">🔊</button><br>Mein Onkel ist lustig.</td>
+    </tr>
+    <tr>
+      <td>mein (Bezugswort männlich)</td>
+      <td><span class="fr">mon</span><button class="speak" onclick="speak('mon')">🔊</button></td>
+      <td><span class="example">Mon frère est grand.</span><button class="speak" onclick="speak('Mon frère est grand.')">🔊</button><br>Mein Bruder ist groß.</td>
+    </tr>
+    <tr>
+      <td>meine (Bezugswort weiblich)</td>
+      <td><span class="fr">ma</span><button class="speak" onclick="speak('ma')">🔊</button></td>
+      <td><span class="example">Ma mère est jeune.</span><button class="speak" onclick="speak('Ma mère est jeune.')">🔊</button><br>Meine Mutter ist jung.</td>
+    </tr>
+    <tr>
+      <td>meine (Bezugswort im Plural)</td>
+      <td><span class="fr">mes</span><button class="speak" onclick="speak('mes')">🔊</button></td>
+      <td><span class="example">Mes parents sont là.</span><button class="speak" onclick="speak('Mes parents sont là.')">🔊</button><br>Meine Eltern sind da.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Unité 4B</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Deutsch</th>
+      <th>Französisch</th>
+      <th>Beispielsatz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>null (0)</td>
+      <td><span class="fr">zéro</span><button class="speak" onclick="speak('zéro')">🔊</button></td>
+      <td><span class="example">Il y a zéro problème.</span><button class="speak" onclick="speak('Il y a zéro problème.')">🔊</button><br>Es gibt null Probleme.</td>
+    </tr>
+    <tr>
+      <td>eins (1)</td>
+      <td><span class="fr">un</span><button class="speak" onclick="speak('un')">🔊</button></td>
+      <td><span class="example">J'ai un frère.</span><button class="speak" onclick="speak('J\'ai un frère.')">🔊</button><br>Ich habe einen Bruder.</td>
+    </tr>
+    <tr>
+      <td>zwei (2)</td>
+      <td><span class="fr">deux</span><button class="speak" onclick="speak('deux')">🔊</button></td>
+      <td><span class="example">J'ai deux sœurs.</span><button class="speak" onclick="speak('J\'ai deux sœurs.')">🔊</button><br>Ich habe zwei Schwestern.</td>
+    </tr>
+    <tr>
+      <td>drei (3)</td>
+      <td><span class="fr">trois</span><button class="speak" onclick="speak('trois')">🔊</button></td>
+      <td><span class="example">Il a trois chats.</span><button class="speak" onclick="speak('Il a trois chats.')">🔊</button><br>Er hat drei Katzen.</td>
+    </tr>
+    <tr>
+      <td>vier (4)</td>
+      <td><span class="fr">quatre</span><button class="speak" onclick="speak('quatre')">🔊</button></td>
+      <td><span class="example">Nous sommes quatre.</span><button class="speak" onclick="speak('Nous sommes quatre.')">🔊</button><br>Wir sind zu viert.</td>
+    </tr>
+    <tr>
+      <td>fünf (5)</td>
+      <td><span class="fr">cinq</span><button class="speak" onclick="speak('cinq')">🔊</button></td>
+      <td><span class="example">Il est cinq heures.</span><button class="speak" onclick="speak('Il est cinq heures.')">🔊</button><br>Es ist fünf Uhr.</td>
+    </tr>
+    <tr>
+      <td>sechs (6)</td>
+      <td><span class="fr">six</span><button class="speak" onclick="speak('six')">🔊</button></td>
+      <td><span class="example">J'ai six ans.</span><button class="speak" onclick="speak('J\'ai six ans.')">🔊</button><br>Ich bin sechs Jahre alt.</td>
+    </tr>
+    <tr>
+      <td>sieben (7)</td>
+      <td><span class="fr">sept</span><button class="speak" onclick="speak('sept')">🔊</button></td>
+      <td><span class="example">Il y a sept jours.</span><button class="speak" onclick="speak('Il y a sept jours.')">🔊</button><br>Es gibt sieben Tage.</td>
+    </tr>
+    <tr>
+      <td>acht (8)</td>
+      <td><span class="fr">huit</span><button class="speak" onclick="speak('huit')">🔊</button></td>
+      <td><span class="example">Il est huit heures.</span><button class="speak" onclick="speak('Il est huit heures.')">🔊</button><br>Es ist acht Uhr.</td>
+    </tr>
+    <tr>
+      <td>neun (9)</td>
+      <td><span class="fr">neuf</span><button class="speak" onclick="speak('neuf')">🔊</button></td>
+      <td><span class="example">J'ai neuf livres.</span><button class="speak" onclick="speak('J\'ai neuf livres.')">🔊</button><br>Ich habe neun Bücher.</td>
+    </tr>
+    <tr>
+      <td>zehn (10)</td>
+      <td><span class="fr">dix</span><button class="speak" onclick="speak('dix')">🔊</button></td>
+      <td><span class="example">Il a dix ans.</span><button class="speak" onclick="speak('Il a dix ans.')">🔊</button><br>Er ist zehn Jahre alt.</td>
+    </tr>
+    <tr>
+      <td>elf (11)</td>
+      <td><span class="fr">onze</span><button class="speak" onclick="speak('onze')">🔊</button></td>
+      <td><span class="example">Il est onze heures.</span><button class="speak" onclick="speak('Il est onze heures.')">🔊</button><br>Es ist elf Uhr.</td>
+    </tr>
+    <tr>
+      <td>zwölf (12)</td>
+      <td><span class="fr">douze</span><button class="speak" onclick="speak('douze')">🔊</button></td>
+      <td><span class="example">Il y a douze mois.</span><button class="speak" onclick="speak('Il y a douze mois.')">🔊</button><br>Es gibt zwölf Monate.</td>
+    </tr>
+    <tr>
+      <td>dreizehn (13)</td>
+      <td><span class="fr">treize</span><button class="speak" onclick="speak('treize')">🔊</button></td>
+      <td><span class="example">Ma sœur a treize ans.</span><button class="speak" onclick="speak('Ma sœur a treize ans.')">🔊</button><br>Meine Schwester ist 13.</td>
+    </tr>
+    <tr>
+      <td>vierzehn (14)</td>
+      <td><span class="fr">quatorze</span><button class="speak" onclick="speak('quatorze')">🔊</button></td>
+      <td><span class="example">J'ai quatorze ans.</span><button class="speak" onclick="speak('J\'ai quatorze ans.')">🔊</button><br>Ich bin 14 Jahre alt.</td>
+    </tr>
+    <tr>
+      <td>fünfzehn (15)</td>
+      <td><span class="fr">quinze</span><button class="speak" onclick="speak('quinze')">🔊</button></td>
+      <td><span class="example">Il est quinze heures.</span><button class="speak" onclick="speak('Il est quinze heures.')">🔊</button><br>Es ist 15 Uhr.</td>
+    </tr>
+    <tr>
+      <td>sechzehn (16)</td>
+      <td><span class="fr">seize</span><button class="speak" onclick="speak('seize')">🔊</button></td>
+      <td><span class="example">Mon frère a seize ans.</span><button class="speak" onclick="speak('Mon frère a seize ans.')">🔊</button><br>Mein Bruder ist 16.</td>
+    </tr>
+    <tr>
+      <td>eine Zahl</td>
+      <td><span class="fr">un nombre</span><button class="speak" onclick="speak('un nombre')">🔊</button></td>
+      <td><span class="example">Choisis un nombre !</span><button class="speak" onclick="speak('Choisis un nombre !')">🔊</button><br>Wähle eine Zahl!</td>
+    </tr>
+  </tbody>
+</table>
+
+<footer>Ma famille – Unité 4 · Bonne chance ! 🇫🇷</footer>
+
+<script>
+  function speak(text) {
+    if (!('speechSynthesis' in window)) {
+      alert('Ihr Browser unterstützt die Sprachausgabe leider nicht.');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'fr-FR';
+    utt.rate = 0.9;
+    window.speechSynthesis.speak(utt);
+  }
+</script>
+
+</body>
+</html>
