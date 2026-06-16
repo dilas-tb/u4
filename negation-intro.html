@@ -989,43 +989,43 @@
   const pairs = [
     {
       id: 1,
-      de: "Ich spreche mit meiner Mutter.",
-      fr: "Je parle avec ma mère."
+      de: "Ich spreche mit meiner Schwester.",
+      fr: "Je parle avec ma sœur."
     },
     {
       id: 2,
-      de: "Ich spreche nicht mit meiner Mutter.",
-      fr: "Je ne parle pas avec ma mère."
+      de: "Ich spreche nicht mit meiner Schwester.",
+      fr: "Je ne parle pas avec ma sœur."
     },
     {
       id: 3,
-      de: "Mein Bruder spielt.",
-      fr: "Mon frère joue."
+      de: "Mein Bruder arbeitet.",
+      fr: "Mon frère travaille."
     },
     {
       id: 4,
-      de: "Mein Bruder spielt nicht.",
-      fr: "Mon frère ne joue pas."
+      de: "Mein Bruder arbeitet nicht.",
+      fr: "Mon frère ne travaille pas."
     },
     {
       id: 5,
-      de: "Sie ist nett.",
-      fr: "Elle est gentille."
+      de: "Sie ist in der Schule.",
+      fr: "Elle est à l'école."
     },
     {
       id: 6,
-      de: "Sie ist nicht nett.",
-      fr: "Elle n’est pas gentille."
+      de: "Sie ist nicht in der Schule.",
+      fr: "Elle n’est pas à l'école."
     },
     {
       id: 7,
-      de: "Ich liebe meine Familie.",
-      fr: "J’aime ma famille."
+      de: "Ich liebe Spaghetti.",
+      fr: "J’aime les spaghettis."
     },
     {
       id: 8,
-      de: "Ich liebe meine Familie nicht.",
-      fr: "Je n’aime pas ma famille."
+      de: "Ich mag Spaghetti nicht.",
+      fr: "Je n’aime pas les spaghettis."
     }
   ];
 
@@ -1104,24 +1104,24 @@
   // Übung 6 Translation
   const translationTasks = [
     {
-      de: "Ich spreche nicht.",
-      answers: ["je ne parle pas"]
+      de: "Ich arbeite nicht. (arbeiten - travailler)",
+      answers: ["je ne travaille pas"]
     },
     {
-      de: "Mein Bruder spielt nicht.",
+      de: "Mein Bruder spielt nicht. (mein Bruder - mon frère, spielen - jouer)",
       answers: ["mon frère ne joue pas", "mon frere ne joue pas"]
     },
     {
-      de: "Ich liebe meine Familie nicht.",
-      answers: ["je n'aime pas ma famille", "je n’aime pas ma famille"]
+      de: "Ich mag Pauline nicht. (mögen - aimer)",
+      answers: ["je n'aime pas Pauline", "je n´aime pas Pauline"]
     },
     {
-      de: "Sie ist nicht nett.",
-      answers: ["elle n'est pas gentille", "elle n’est pas gentille"]
+      de: "Sie ist nicht Pauline." (sein - être),
+      answers: ["elle n'est pas Pauline", "elle n´est pas Pauline"]
     },
     {
-      de: "Du hörst deiner Mutter nicht zu.",
-      answers: ["tu n'écoutes pas ta mère", "tu n’écoutes pas ta mère", "tu n'ecoutes pas ta mere"]
+      de: "Du hörst deiner Mutter nicht zu." (deiner Mutter zuhören - écouter ta mère),
+      answers: ["tu n'écoutes pas ta mère", "tu n´écoutes pas ta mère", "tu n'ecoutes pas ta mere", "tu n´ecoutes pas ta mere"]
     }
   ];
 
@@ -1172,12 +1172,12 @@
   // Mini Check
   const miniCheckTasks = [
     {
-      sentence: "Je ne parle pas.",
+      sentence: "Je ne parle pas français.",
       correct: true,
       expl: "Richtig: ne steht vor parle, pas steht danach."
     },
     {
-      sentence: "Je parle ne pas.",
+      sentence: "Je parle français ne pas.",
       correct: false,
       expl: "Falsch: ne muss vor das konjugierte Verb."
     },
