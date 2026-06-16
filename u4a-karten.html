@@ -102,79 +102,85 @@
   /* Antwort-Buttons */
   .answer-buttons {
     display: flex;
-    gap: 16px;
+    gap: 18px;
   }
   .answer-buttons button {
-    font-size: 1rem;
     padding: 12px 22px;
+    font-size: 1rem;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     color: #fff;
-    transition: transform 0.1s, opacity 0.2s;
+    transition: opacity 0.2s, transform 0.1s;
   }
-  .answer-buttons button:active { transform: scale(0.95); }
-  .knew { background: #3a9d5d; }
-  .knew:hover { background: #45b86d; }
-  .didnt { background: #c0504d; }
-  .didnt:hover { background: #d65c59; }
-  .answer-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .answer-buttons button:active { transform: scale(0.96); }
+  .knew { background: #2e8b57; }
+  .knew:hover { background: #379e64; }
+  .didnt { background: #b5483f; }
+  .didnt:hover { background: #cc544a; }
+  .answer-buttons button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 
   /* Endbildschirm */
   .end-screen {
     text-align: center;
     background: #2c2c44;
-    padding: 40px;
+    padding: 30px 40px;
     border-radius: 16px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.4);
   }
-  .end-screen h2 { color: #8ab4f8; margin-bottom: 15px; }
-  .end-screen p { margin-bottom: 20px; color: #ccc; }
-  .restart-btn {
+  .end-screen h2 { color: #8ab4f8; margin-bottom: 14px; }
+  .end-screen p { color: #ccc; margin-bottom: 20px; }
+  .end-screen button {
+    padding: 12px 26px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
     background: #3d6fd6;
     color: #fff;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 10px;
-    font-size: 1rem;
     cursor: pointer;
   }
-  .restart-btn:hover { background: #5485e8; }
-  .hide { display: none !important; }
+  .end-screen button:hover { background: #5485e8; }
+
+  .hide { display: none; }
 </style>
 </head>
 <body>
-
-  <h1>Ma famille 👨‍👩‍👧‍👦</h1>
-  <p class="info">Klicke auf die Karte, um sie umzudrehen. Hast du das Wort gewusst?</p>
+  <h1>Ma famille</h1>
+  <p class="info">Klicke auf die Karte, um sie umzudrehen. Erst danach kannst du antworten.</p>
 
   <div class="progress" id="progress"></div>
 
-  <div class="card-container" id="cardContainer">
+  <div class="card-container hide" id="cardContainer">
     <div class="card" id="card">
+      <!-- Vorderseite -->
       <div class="card-face card-front">
         <span class="lang-label" id="frontLabel"></span>
         <span class="word" id="frontWord"></span>
         <button class="speak-btn" id="frontSpeak" title="Aussprache">🔊</button>
-        <span class="tap-hint">Karte antippen</span>
+        <span class="tap-hint">Karte umdrehen →</span>
       </div>
+      <!-- Rückseite -->
       <div class="card-face card-back">
         <span class="lang-label" id="backLabel"></span>
         <span class="word" id="backWord"></span>
         <button class="speak-btn" id="backSpeak" title="Aussprache">🔊</button>
+        <span class="tap-hint">← zurückdrehen</span>
       </div>
     </div>
   </div>
 
-  <div class="answer-buttons" id="answerButtons">
-    <button class="didnt" id="didntBtn">Wusste ich nicht.</button>
+  <div class="answer-buttons hide" id="answerButtons">
     <button class="knew" id="knewBtn">Wusste ich!</button>
+    <button class="didnt" id="didntBtn">Wusste ich nicht.</button>
   </div>
 
   <div class="end-screen hide" id="endScreen">
     <h2>Bravo ! 🎉</h2>
     <p id="endText"></p>
-    <button class="restart-btn" id="restartBtn">Nochmal üben</button>
+    <button id="restartBtn">Nochmal üben</button>
   </div>
 
 <script>
@@ -194,6 +200,31 @@
     { fr: "un oncle", de: "ein Onkel" }
   ];
 
+  // DOM-Referenzen
+  const cardContainer = document.getElementById('cardContainer');
+  const card = document.getElementById('card');
+  const frontWord = document.getElementById('frontWord');
+  const backWord = document.getElementById('backWord');
+  const frontLabel = document.getElementById('frontLabel');
+  const backLabel = document.getElementById('backLabel');
+  const frontSpeak = document.getElementById('frontSpeak');
+  const backSpeak = document.getElementById('backSpeak');
+  const answerButtons = document.getElementById('answerButtons');
+  const knewBtn = document.getElementById('knewBtn');
+  const didntBtn = document.getElementById('didntBtn');
+  const progress = document.getElementById('progress');
+  const endScreen = document.getElementById('endScreen');
+  const endText = document.getElementById('endText');
+  const restartBtn = document.getElementById('restartBtn');
+
+  let queue = [];
+  let currentCard = null;
+  let isFlipped = false;
+  let isAnimating = false;
+  let totalInitial = 0;
+  let wrongCount = 0;
+  let answeredCount = 0;
+
   // Hilfsfunktion: Array mischen (Fisher-Yates)
   function shuffle(arr) {
     const a = arr.slice();
@@ -204,86 +235,62 @@
     return a;
   }
 
-  // Karten erstellen mit zufälliger Abfragerichtung
+  // Queue aufbauen: gemischt, je Karte zufällige Richtung
   function buildQueue() {
     return shuffle(vocab).map(v => ({
-      ...v,
-      // direction: true = FR->DE (Vorderseite FR), false = DE->FR (Vorderseite DE)
-      direction: Math.random() < 0.5
+      fr: v.fr,
+      de: v.de,
+      direction: Math.random() < 0.5 // true = FR→DE, false = DE→FR
     }));
   }
 
-  let queue = [];
-  let totalInitial = 0;
-  let wrongCount = 0;
-
-  // DOM-Elemente
-  const card = document.getElementById('card');
-  const frontWord = document.getElementById('frontWord');
-  const backWord = document.getElementById('backWord');
-  const frontLabel = document.getElementById('frontLabel');
-  const backLabel = document.getElementById('backLabel');
-  const frontSpeak = document.getElementById('frontSpeak');
-  const backSpeak = document.getElementById('backSpeak');
-  const knewBtn = document.getElementById('knewBtn');
-  const didntBtn = document.getElementById('didntBtn');
-  const progress = document.getElementById('progress');
-  const endScreen = document.getElementById('endScreen');
-  const endText = document.getElementById('endText');
-  const restartBtn = document.getElementById('restartBtn');
-  const answerButtons = document.getElementById('answerButtons');
-  const cardContainer = document.getElementById('cardContainer');
-
-  let currentCard = null;
-  let isFlipped = false;
-  let isAnimating = false;
-
-  // Französische Stimme ermitteln
-  function getFrenchVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    return voices.find(v => v.lang && v.lang.toLowerCase().startsWith('fr')) || null;
-  }
-  // Stimmen vorladen
-  window.speechSynthesis.onvoiceschanged = getFrenchVoice;
-
+  // Französisches Wort vorlesen
   function speakFrench(text) {
     if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'fr-FR';
-    const v = getFrenchVoice();
-    if (v) u.voice = v;
-    u.rate = 0.9;
-    window.speechSynthesis.speak(u);
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'fr-FR';
+    const frVoice = speechSynthesis.getVoices().find(v => v.lang.startsWith('fr'));
+    if (frVoice) utter.voice = frVoice;
+    speechSynthesis.speak(utter);
   }
+
+  frontSpeak.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (currentCard) speakFrench(currentCard.fr);
+  });
+  backSpeak.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (currentCard) speakFrench(currentCard.fr);
+  });
 
   // Karte laden
   function loadCard(c) {
     currentCard = c;
     if (c.direction) {
-      // FR -> DE : vorne Französisch
       frontWord.textContent = c.fr;
       backWord.textContent = c.de;
       frontLabel.textContent = "Français";
       backLabel.textContent = "Deutsch";
-      // Aussprache-Button immer auf der FRANZÖSISCHEN Seite sichtbar:
-      frontSpeak.classList.remove('hidden');  // vorne FR -> sichtbar
-      backSpeak.classList.add('hidden');       // hinten DE -> unsichtbar
+      frontSpeak.classList.remove('hidden');
+      backSpeak.classList.add('hidden');
     } else {
-      // DE -> FR : vorne Deutsch
       frontWord.textContent = c.de;
       backWord.textContent = c.fr;
       frontLabel.textContent = "Deutsch";
       backLabel.textContent = "Français";
-      frontSpeak.classList.add('hidden');      // vorne DE -> unsichtbar
-      backSpeak.classList.remove('hidden');    // hinten FR -> sichtbar
+      frontSpeak.classList.add('hidden');
+      backSpeak.classList.remove('hidden');
     }
+    // Antwort-Buttons sperren, bis die Karte gewendet wurde
+    knewBtn.disabled = true;
+    didntBtn.disabled = true;
     updateProgress();
   }
 
+  // Fortschrittsanzeige (robuster Zähler)
   function updateProgress() {
-    const done = totalInitial - queue.length;
-    progress.textContent = `Karte ${Math.min(done + 1, totalInitial + wrongCount)} – noch ${queue.length} in der Liste`;
+    progress.textContent = `Bearbeitet: ${answeredCount} – noch in der Liste: ${queue.length + 1}`;
   }
 
   // Karte umdrehen
@@ -291,66 +298,67 @@
     if (isAnimating) return;
     isFlipped = !isFlipped;
     card.classList.toggle('flipped', isFlipped);
+    // Buttons nur aktivieren, wenn die Rückseite zu sehen ist
+    if (isFlipped) {
+      knewBtn.disabled = false;
+      didntBtn.disabled = false;
+    } else {
+      knewBtn.disabled = true;
+      didntBtn.disabled = true;
+    }
   }
 
-  // Klick auf Karte
   card.addEventListener('click', flipCard);
-
-  // Aussprache-Buttons (verhindern, dass die Karte umklappt)
-  frontSpeak.addEventListener('click', (e) => {
-    e.stopPropagation();
-    speakFrench(currentCard.fr);
-  });
-  backSpeak.addEventListener('click', (e) => {
-    e.stopPropagation();
-    speakFrench(currentCard.fr);
-  });
 
   // Antwort verarbeiten
   function handleAnswer(knew) {
-    if (isAnimating) return;
-    window.speechSynthesis.cancel();
+    if (isAnimating || !isFlipped) return;
+    speechSynthesis.cancel();
+    answeredCount++;
 
+    // Falsch beantwortete Karte hinten wieder anhängen
     if (!knew) {
-      // ans Ende der Liste hängen
-      queue.push({ ...currentCard });
       wrongCount++;
+      queue.push(currentCard);
     }
 
-    isAnimating = true;
-    // Buttons sperren während der Animation
+    // Buttons während des Übergangs sperren
     knewBtn.disabled = true;
     didntBtn.disabled = true;
+    nextCard();
+  }
 
-    // Karte zurückdrehen (falls umgedreht), DANN neue Karte laden
+  // Zur nächsten Karte (erst nach abgeschlossener Wende-Animation)
+  function nextCard() {
+    isAnimating = true;
+
     if (isFlipped) {
+      // Karte zurückdrehen und auf Ende der Animation warten
       isFlipped = false;
       card.classList.remove('flipped');
-      // Warten bis Umdrehanimation abgeschlossen ist
-      const onEnd = () => {
+
+      const onEnd = (e) => {
+        if (e.propertyName !== 'transform') return;
         card.removeEventListener('transitionend', onEnd);
-        nextCard();
+        isAnimating = false;
+        proceed();
       };
       card.addEventListener('transitionend', onEnd);
     } else {
-      // Karte war nicht umgedreht -> kurze Sicherheitsverzögerung
-      setTimeout(nextCard, 50);
+      isAnimating = false;
+      proceed();
     }
   }
 
-  function nextCard() {
+  function proceed() {
     if (queue.length === 0) {
       showEnd();
-      isAnimating = false;
-      return;
+    } else {
+      loadCard(queue.shift());
     }
-    const next = queue.shift();
-    loadCard(next);
-    isAnimating = false;
-    knewBtn.disabled = false;
-    didntBtn.disabled = false;
   }
 
+  // Endbildschirm
   function showEnd() {
     cardContainer.classList.add('hide');
     answerButtons.classList.add('hide');
@@ -372,14 +380,13 @@
     queue = buildQueue();
     totalInitial = queue.length;
     wrongCount = 0;
+    answeredCount = 0;
     isFlipped = false;
     card.classList.remove('flipped');
     cardContainer.classList.remove('hide');
     answerButtons.classList.remove('hide');
     progress.classList.remove('hide');
     endScreen.classList.add('hide');
-    knewBtn.disabled = false;
-    didntBtn.disabled = false;
     loadCard(queue.shift());
   }
 
