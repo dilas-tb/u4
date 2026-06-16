@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ma famille – Vokabeltrainer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #1e1e2f;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 15px;
+  }
+  h1 { color: #8ab4f8; margin-bottom: 8px; text-align: center; }
+  .info { color: #aaa; margin-bottom: 25px; font-size: 0.95rem; text-align: center; }
+  .progress { margin-bottom: 18px; font-size: 0.95rem; color: #bbb; }
+
+  /* Karte */
+  .card-container {
+    perspective: 1200px;
+    width: 340px;
+    height: 220px;
+    margin-bottom: 25px;
+  }
+  .card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    cursor: pointer;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  }
+  .card-front {
+    background: #2c2c44;
+    border: 2px solid #3d3d5c;
+  }
+  .card-back {
+    background: #34344f;
+    border: 2px solid #4a4a6a;
+    transform: rotateY(180deg);
+  }
+  .word {
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+  }
+  .lang-label {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    font-size: 0.75rem;
+    color: #8ab4f8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .tap-hint {
+    position: absolute;
+    bottom: 12px;
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  /* Aussprache-Button */
+  .speak-btn {
+    margin-top: 18px;
+    background: #3d6fd6;
+    border: none;
+    color: #fff;
+    font-size: 1.3rem;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .speak-btn:hover { background: #5485e8; }
+  .speak-btn.hidden { visibility: hidden; }
+
+  /* Antwort-Buttons */
+  .answer-buttons {
+    display: flex;
+    gap: 16px;
+  }
+  .answer-buttons button {
+    font-size: 1rem;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #fff;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .answer-buttons button:active { transform: scale(0.95); }
+  .knew { background: #3a9d5d; }
+  .knew:hover { background: #45b86d; }
+  .didnt { background: #c0504d; }
+  .didnt:hover { background: #d65c59; }
+  .answer-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Endbildschirm */
+  .end-screen {
+    text-align: center;
+    background: #2c2c44;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  }
+  .end-screen h2 { color: #8ab4f8; margin-bottom: 15px; }
+  .end-screen p { margin-bottom: 20px; color: #ccc; }
+  .restart-btn {
+    background: #3d6fd6;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .restart-btn:hover { background: #5485e8; }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+
+  <h1>Ma famille 👨‍👩‍👧‍👦</h1>
+  <p class="info">Klicke auf die Karte, um sie umzudrehen. Hast du das Wort gewusst?</p>
+
+  <div class="progress" id="progress"></div>
+
+  <div class="card-container" id="cardContainer">
+    <div class="card" id="card">
+      <div class="card-face card-front">
+        <span class="lang-label" id="frontLabel"></span>
+        <span class="word" id="frontWord"></span>
+        <button class="speak-btn" id="frontSpeak" title="Aussprache">🔊</button>
+        <span class="tap-hint">Karte antippen</span>
+      </div>
+      <div class="card-face card-back">
+        <span class="lang-label" id="backLabel"></span>
+        <span class="word" id="backWord"></span>
+        <button class="speak-btn" id="backSpeak" title="Aussprache">🔊</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="answer-buttons" id="answerButtons">
+    <button class="didnt" id="didntBtn">Wusste ich nicht.</button>
+    <button class="knew" id="knewBtn">Wusste ich!</button>
+  </div>
+
+  <div class="end-screen hide" id="endScreen">
+    <h2>Bravo ! 🎉</h2>
+    <p id="endText"></p>
+    <button class="restart-btn" id="restartBtn">Nochmal üben</button>
+  </div>
+
+<script>
+  // Vokabelliste
+  const vocab = [
+    { fr: "une mère", de: "eine Mutter" },
+    { fr: "un père", de: "ein Vater" },
+    { fr: "une belle-mère", de: "eine Stiefmutter" },
+    { fr: "un beau-père", de: "ein Stiefvater" },
+    { fr: "une grand-mère", de: "eine Oma" },
+    { fr: "un grand-père", de: "ein Opa" },
+    { fr: "une sœur", de: "eine Schwester" },
+    { fr: "un frère", de: "ein Bruder" },
+    { fr: "une demi-sœur", de: "eine Halbschwester" },
+    { fr: "un demi-frère", de: "ein Halbbruder" },
+    { fr: "une tante", de: "eine Tante" },
+    { fr: "un oncle", de: "ein Onkel" }
+  ];
+
+  // Hilfsfunktion: Array mischen (Fisher-Yates)
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Karten erstellen mit zufälliger Abfragerichtung
+  function buildQueue() {
+    return shuffle(vocab).map(v => ({
+      ...v,
+      // direction: true = FR->DE (Vorderseite FR), false = DE->FR (Vorderseite DE)
+      direction: Math.random() < 0.5
+    }));
+  }
+
+  let queue = [];
+  let totalInitial = 0;
+  let wrongCount = 0;
+
+  // DOM-Elemente
+  const card = document.getElementById('card');
+  const frontWord = document.getElementById('frontWord');
+  const backWord = document.getElementById('backWord');
+  const frontLabel = document.getElementById('frontLabel');
+  const backLabel = document.getElementById('backLabel');
+  const frontSpeak = document.getElementById('frontSpeak');
+  const backSpeak = document.getElementById('backSpeak');
+  const knewBtn = document.getElementById('knewBtn');
+  const didntBtn = document.getElementById('didntBtn');
+  const progress = document.getElementById('progress');
+  const endScreen = document.getElementById('endScreen');
+  const endText = document.getElementById('endText');
+  const restartBtn = document.getElementById('restartBtn');
+  const answerButtons = document.getElementById('answerButtons');
+  const cardContainer = document.getElementById('cardContainer');
+
+  let currentCard = null;
+  let isFlipped = false;
+  let isAnimating = false;
+
+  // Französische Stimme ermitteln
+  function getFrenchVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    return voices.find(v => v.lang && v.lang.toLowerCase().startsWith('fr')) || null;
+  }
+  // Stimmen vorladen
+  window.speechSynthesis.onvoiceschanged = getFrenchVoice;
+
+  function speakFrench(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';
+    const v = getFrenchVoice();
+    if (v) u.voice = v;
+    u.rate = 0.9;
+    window.speechSynthesis.speak(u);
+  }
+
+  // Karte laden
+  function loadCard(c) {
+    currentCard = c;
+    if (c.direction) {
+      // FR -> DE : vorne Französisch
+      frontWord.textContent = c.fr;
+      backWord.textContent = c.de;
+      frontLabel.textContent = "Français";
+      backLabel.textContent = "Deutsch";
+      // Aussprache-Button immer auf der FRANZÖSISCHEN Seite sichtbar:
+      frontSpeak.classList.remove('hidden');  // vorne FR -> sichtbar
+      backSpeak.classList.add('hidden');       // hinten DE -> unsichtbar
+    } else {
+      // DE -> FR : vorne Deutsch
+      frontWord.textContent = c.de;
+      backWord.textContent = c.fr;
+      frontLabel.textContent = "Deutsch";
+      backLabel.textContent = "Français";
+      frontSpeak.classList.add('hidden');      // vorne DE -> unsichtbar
+      backSpeak.classList.remove('hidden');    // hinten FR -> sichtbar
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const done = totalInitial - queue.length;
+    progress.textContent = `Karte ${Math.min(done + 1, totalInitial + wrongCount)} – noch ${queue.length} in der Liste`;
+  }
+
+  // Karte umdrehen
+  function flipCard() {
+    if (isAnimating) return;
+    isFlipped = !isFlipped;
+    card.classList.toggle('flipped', isFlipped);
+  }
+
+  // Klick auf Karte
+  card.addEventListener('click', flipCard);
+
+  // Aussprache-Buttons (verhindern, dass die Karte umklappt)
+  frontSpeak.addEventListener('click', (e) => {
+    e.stopPropagation();
+    speakFrench(currentCard.fr);
+  });
+  backSpeak.addEventListener('click', (e) => {
+    e.stopPropagation();
+    speakFrench(currentCard.fr);
+  });
+
+  // Antwort verarbeiten
+  function handleAnswer(knew) {
+    if (isAnimating) return;
+    window.speechSynthesis.cancel();
+
+    if (!knew) {
+      // ans Ende der Liste hängen
+      queue.push({ ...currentCard });
+      wrongCount++;
+    }
+
+    isAnimating = true;
+    // Buttons sperren während der Animation
+    knewBtn.disabled = true;
+    didntBtn.disabled = true;
+
+    // Karte zurückdrehen (falls umgedreht), DANN neue Karte laden
+    if (isFlipped) {
+      isFlipped = false;
+      card.classList.remove('flipped');
+      // Warten bis Umdrehanimation abgeschlossen ist
+      const onEnd = () => {
+        card.removeEventListener('transitionend', onEnd);
+        nextCard();
+      };
+      card.addEventListener('transitionend', onEnd);
+    } else {
+      // Karte war nicht umgedreht -> kurze Sicherheitsverzögerung
+      setTimeout(nextCard, 50);
+    }
+  }
+
+  function nextCard() {
+    if (queue.length === 0) {
+      showEnd();
+      isAnimating = false;
+      return;
+    }
+    const next = queue.shift();
+    loadCard(next);
+    isAnimating = false;
+    knewBtn.disabled = false;
+    didntBtn.disabled = false;
+  }
+
+  function showEnd() {
+    cardContainer.classList.add('hide');
+    answerButtons.classList.add('hide');
+    progress.classList.add('hide');
+    endScreen.classList.remove('hide');
+    endText.textContent = `Du hast alle ${totalInitial} Vokabeln durchgearbeitet.` +
+      (wrongCount > 0
+        ? ` Die ${wrongCount} mit „Wusste ich nicht." markierten Karten wurden wiederholt.`
+        : ` Und das ganz ohne Fehler – super gemacht!`);
+  }
+
+  knewBtn.addEventListener('click', () => handleAnswer(true));
+  didntBtn.addEventListener('click', () => handleAnswer(false));
+
+  restartBtn.addEventListener('click', start);
+
+  // Start / Neustart
+  function start() {
+    queue = buildQueue();
+    totalInitial = queue.length;
+    wrongCount = 0;
+    isFlipped = false;
+    card.classList.remove('flipped');
+    cardContainer.classList.remove('hide');
+    answerButtons.classList.remove('hide');
+    progress.classList.remove('hide');
+    endScreen.classList.add('hide');
+    knewBtn.disabled = false;
+    didntBtn.disabled = false;
+    loadCard(queue.shift());
+  }
+
+  start();
+</script>
+</body>
+</html>
