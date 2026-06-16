@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La négation avec ne ... pas</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --panel: #1f1f25;
+      --panel2: #292933;
+      --text: #f2f2f2;
+      --muted: #b9b9c7;
+      --accent: #7dd3fc;
+      --accent2: #a78bfa;
+      --good: #34d399;
+      --bad: #fb7185;
+      --warn: #fbbf24;
+      --border: #3f3f46;
+      --input: #18181b;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #18181b 50%, #111827 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 2rem 1rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      color: var(--accent);
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 0.8rem;
+      font-size: 1.1rem;
+    }
+
+    main {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    section {
+      background: rgba(31, 31, 37, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: 0 8px 25px var(--shadow);
+    }
+
+    h2 {
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin-top: 0;
+    }
+
+    h3 {
+      color: var(--accent2);
+      margin-top: 1.2rem;
+    }
+
+    .small {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .rule {
+      background: #172554;
+      border-left: 5px solid var(--accent);
+      padding: 1rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+    }
+
+    .example {
+      background: #262626;
+      border: 1px solid var(--border);
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      margin: 0.8rem 0;
+    }
+
+    .fr {
+      color: #bfdbfe;
+      font-weight: 700;
+    }
+
+    .de {
+      color: #fde68a;
+    }
+
+    details {
+      background: #18181b;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      margin: 0.9rem 0;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--warn);
+      font-weight: 700;
+    }
+
+    button, .word-btn, .choice-btn, .drag-item {
+      background: #27272a;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.55rem 0.85rem;
+      margin: 0.25rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.1s, background 0.2s, border 0.2s;
+    }
+
+    button:hover, .word-btn:hover, .choice-btn:hover, .drag-item:hover {
+      background: #3f3f46;
+      transform: translateY(-1px);
+    }
+
+    .word-btn.selected {
+      background: #0f766e;
+      border-color: var(--good);
+    }
+
+    .word-btn.wrong {
+      background: #7f1d1d;
+      border-color: var(--bad);
+    }
+
+    .correct {
+      color: var(--good);
+      font-weight: 700;
+    }
+
+    .incorrect {
+      color: var(--bad);
+      font-weight: 700;
+    }
+
+    .feedback {
+      min-height: 1.6rem;
+      margin-top: 0.7rem;
+      font-weight: 700;
+    }
+
+    .task {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .drop-zone {
+      display: inline-block;
+      min-width: 60px;
+      min-height: 38px;
+      vertical-align: middle;
+      border: 2px dashed #71717a;
+      border-radius: 10px;
+      padding: 0.35rem 0.5rem;
+      margin: 0 0.2rem;
+      background: #18181b;
+      text-align: center;
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: var(--accent);
+      background: #1e293b;
+    }
+
+    .drag-area {
+      margin: 0.8rem 0;
+      padding: 0.7rem;
+      border-radius: 12px;
+      background: #18181b;
+    }
+
+    .drag-item {
+      display: inline-block;
+      background: #312e81;
+      border-color: #818cf8;
+      font-weight: 700;
+    }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+
+    @media (max-width: 720px) {
+      .match-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .match-card {
+      background: #18181b;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.8rem;
+      cursor: pointer;
+    }
+
+    .match-card.active {
+      border-color: var(--accent);
+      background: #1e3a8a;
+    }
+
+    .match-card.done {
+      border-color: var(--good);
+      background: #064e3b;
+      cursor: default;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      max-width: 650px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 0.7rem;
+      font-size: 1rem;
+      margin-top: 0.4rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.65rem;
+      text-align: left;
+    }
+
+    th {
+      background: #312e81;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #18181b;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: #334155;
+      color: #dbeafe;
+      font-size: 0.85rem;
+      margin-left: 0.25rem;
+    }
+
+    .progress-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .step-pill {
+      background: #27272a;
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.65rem;
+      border-radius: 999px;
+      color: var(--muted);
+    }
+
+    .step-pill.current {
+      color: white;
+      background: #0369a1;
+      border-color: var(--accent);
+    }
+
+    .teacher-note {
+      background: #422006;
+      border-left: 5px solid var(--warn);
+      padding: 1rem;
+      border-radius: 12px;
+      color: #fffbeb;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>La négation avec <em>ne ... pas</em></h1>
+  <p>Französische Verneinung für Anfängerinnen und Anfänger</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>🎯 Ziel der Stunde</h2>
+    <p>
+      Heute lernst du, wie man einfache französische Sätze mit
+      <strong>ne ... pas</strong> verneint.
+    </p>
+
+    <div class="rule">
+      Am Ende kannst du Sätze bilden wie:
+      <div class="example">
+        <span class="fr">J’aime ma famille.</span>
+        <br>
+        <span class="de">Ich liebe meine Familie.</span>
+      </div>
+      <div class="example">
+        <span class="fr">Je n’aime pas ma famille.</span>
+        <br>
+        <span class="de">Ich liebe meine Familie nicht.</span>
+      </div>
+    </div>
+
+    <details>
+      <summary>💡 Hilfe: Was bedeutet „Verneinung“?</summary>
+      <p>
+        Eine Verneinung sagt, dass etwas <strong>nicht</strong> so ist.
+      </p>
+      <p>
+        Deutsch: Ich spiele. → Ich spiele <strong>nicht</strong>.
+      </p>
+      <p>
+        Französisch: Je joue. → Je <strong>ne</strong> joue <strong>pas</strong>.
+      </p>
+    </details>
+
+    <div class="progress-box">
+      <span class="step-pill current">1. Verb erkennen</span>
+      <span class="step-pill">2. ne + pas finden</span>
+      <span class="step-pill">3. ne ... pas einsetzen</span>
+      <span class="step-pill">4. ne oder n'</span>
+      <span class="step-pill">5. Zuordnen</span>
+      <span class="step-pill">6. Übersetzen</span>
+    </div>
+  </section>
+
+  <!-- SECTION 1 -->
+  <section>
+    <h2>1. Vorwissen: Was ist ein konjugiertes Verb?</h2>
+
+    <p>
+      Ein <strong>Verb</strong> ist ein Tun-Wort. Es sagt, was jemand macht oder wie jemand ist.
+    </p>
+
+    <div class="example">
+      <span class="fr">Je parle.</span> =
+      <span class="de">Ich spreche.</span>
+      <br>
+      Das Verb ist: <strong>parle</strong>
+    </div>
+
+    <p>
+      Ein <strong>konjugiertes Verb</strong> ist an eine Person angepasst.
+    </p>
+
+    <table>
+      <tr>
+        <th>Person</th>
+        <th>Verb</th>
+        <th>Deutsch</th>
+      </tr>
+      <tr>
+        <td>je</td>
+        <td>parle</td>
+        <td>ich spreche</td>
+      </tr>
+      <tr>
+        <td>tu</td>
+        <td>parles</td>
+        <td>du sprichst</td>
+      </tr>
+      <tr>
+        <td>il / elle</td>
+        <td>parle</td>
+        <td>er / sie spricht</td>
+      </tr>
+      <tr>
+        <td>nous</td>
+        <td>parlons</td>
+        <td>wir sprechen</td>
+      </tr>
+    </table>
+
+    <details>
+      <summary>🧩 Merkhilfe</summary>
+      <p>
+        Frage dich: <strong>Was tut die Person?</strong>
+      </p>
+      <ul>
+        <li>Je <strong>joue</strong>. → Was tue ich? Ich spiele.</li>
+        <li>Ma mère <strong>parle</strong>. → Was tut meine Mutter? Sie spricht.</li>
+        <li>Mon frère <strong>est</strong> sympa. → Wie ist mein Bruder? Er ist nett.</li>
+      </ul>
+    </details>
+
+    <h3>Übung 1: Klicke das konjugierte Verb an</h3>
+    <p class="small">Klicke in jedem Satz auf das Verb.</p>
+
+    <div id="verbTasks"></div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section>
+    <h2>2. Die französische Verneinung hat zwei Teile</h2>
+
+    <p>
+      Im Deutschen benutzt man oft nur ein Wort:
+    </p>
+
+    <div class="example">
+      Ich spiele <strong>nicht</strong>.
+    </div>
+
+    <p>
+      Im Französischen braucht man normalerweise zwei Wörter:
+    </p>
+
+    <div class="rule">
+      <strong>ne</strong> + Verb + <strong>pas</strong>
+    </div>
+
+    <div class="example">
+      <span class="fr">Je ne joue pas.</span>
+      <br>
+      <span class="de">Ich spiele nicht.</span>
+    </div>
+
+    <details>
+      <summary>💡 Ganz langsam erklärt</summary>
+      <p>
+        Die Verneinung besteht aus zwei Teilen:
+      </p>
+      <ul>
+        <li><strong>ne</strong> steht meistens vor dem Verb.</li>
+        <li><strong>pas</strong> steht meistens nach dem Verb.</li>
+      </ul>
+      <p>
+        Zusammen bedeuten sie: <strong>nicht</strong>.
+      </p>
+    </details>
+
+    <h3>Übung 2: Klicke <em>ne</em> und <em>pas</em> an</h3>
+    <p class="small">Klicke in jedem Satz beide Teile der Verneinung an.</p>
+
+    <div id="nePasTasks"></div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section>
+    <h2>3. ne ... pas umschließt das konjugierte Verb</h2>
+
+    <p>
+      <strong>ne</strong> steht vor dem konjugierten Verb.
+      <strong>pas</strong> steht nach dem konjugierten Verb.
+    </p>
+
+    <div class="rule">
+      Person + <strong>ne</strong> + Verb + <strong>pas</strong> + Rest
+    </div>
+
+    <div class="example">
+      <span class="fr">Je regarde la photo.</span>
+      <br>
+      <span class="fr">Je <strong>ne</strong> regarde <strong>pas</strong> la photo.</span>
+    </div>
+
+    <details>
+      <summary>🧠 Denkstrategie</summary>
+      <ol>
+        <li>Suche zuerst das konjugierte Verb.</li>
+        <li>Setze <strong>ne</strong> davor.</li>
+        <li>Setze <strong>pas</strong> dahinter.</li>
+      </ol>
+    </details>
+
+    <h3>Übung 3: Ziehe <em>ne</em> und <em>pas</em> in die Lücken</h3>
+    <p class="small">
+      Ziehe die Wörter in die passenden Lücken. Wenn Drag-and-drop nicht klappt, klicke zuerst auf ein Wort und dann auf eine Lücke.
+    </p>
+
+    <div id="dragTasks"></div>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section>
+    <h2>4. Vor Vokalen wird <em>ne</em> zu <em>n'</em></h2>
+
+    <p>
+      Wenn das Verb mit einem Vokal beginnt, wird aus <strong>ne</strong> → <strong>n'</strong>.
+    </p>
+
+    <div class="rule">
+      ne + aime → <strong>n’aime</strong>
+      <br>
+      ne + est → <strong>n’est</strong>
+    </div>
+
+    <p>
+      Vokale sind:
+      <span class="pill">a</span>
+      <span class="pill">e</span>
+      <span class="pill">i</span>
+      <span class="pill">o</span>
+      <span class="pill">u</span>
+      <span class="pill">h stumm</span>
+    </p>
+
+    <div class="example">
+      <span class="fr">J’aime mon frère.</span>
+      <br>
+      <span class="fr">Je <strong>n’aime pas</strong> mon frère.</span>
+    </div>
+
+    <div class="example">
+      <span class="fr">Elle est gentille.</span>
+      <br>
+      <span class="fr">Elle <strong>n’est pas</strong> gentille.</span>
+    </div>
+
+    <details>
+      <summary>⚠️ Achtung</summary>
+      <p>
+        Bei einem Verb mit Konsonant bleibt <strong>ne</strong> normal:
+      </p>
+      <p>
+        <span class="fr">Je ne parle pas.</span>
+      </p>
+      <p>
+        Bei einem Verb mit Vokal nimmt man <strong>n'</strong>:
+      </p>
+      <p>
+        <span class="fr">Je n’aime pas.</span>
+      </p>
+    </details>
+
+    <h3>Übung 4: Entscheide: <em>ne</em> oder <em>n'</em>?</h3>
+
+    <div id="neOrNTasks"></div>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section>
+    <h2>5. Deutsch und Französisch zuordnen</h2>
+
+    <p>
+      Ordne die deutschen Sätze den passenden französischen Sätzen zu.
+    </p>
+
+    <details>
+      <summary>🧩 Tipp</summary>
+      <p>
+        Suche zuerst nach dem Sinn:
+      </p>
+      <ul>
+        <li><strong>nicht</strong> im deutschen Satz → im Französischen brauchst du <strong>ne ... pas</strong>.</li>
+        <li>Kein <strong>nicht</strong> → im Französischen kein <strong>ne ... pas</strong>.</li>
+      </ul>
+    </details>
+
+    <div class="match-grid">
+      <div>
+        <h3>Deutsch</h3>
+        <div id="germanCards"></div>
+      </div>
+      <div>
+        <h3>Französisch</h3>
+        <div id="frenchCards"></div>
+      </div>
+    </div>
+
+    <p id="matchFeedback" class="feedback"></p>
+  </section>
+
+  <!-- SECTION 6 -->
+  <section>
+    <h2>6. Einfache Übersetzungsaufgabe</h2>
+
+    <p>
+      Übersetze die Sätze ins Französische. Achte besonders auf <strong>ne ... pas</strong>.
+    </p>
+
+    <details>
+      <summary>🪜 Satzbau-Gerüst</summary>
+      <p>Für einen verneinten Satz:</p>
+      <div class="rule">
+        Person + ne / n' + Verb + pas + Rest
+      </div>
+      <p>Beispiele:</p>
+      <ul>
+        <li>Ich spreche nicht. → <span class="fr">Je ne parle pas.</span></li>
+        <li>Er liebt nicht. → <span class="fr">Il n’aime pas.</span></li>
+        <li>Sie ist nicht nett. → <span class="fr">Elle n’est pas gentille.</span></li>
+      </ul>
+    </details>
+
+    <div id="translationTasks"></div>
+  </section>
+
+  <!-- EXTRA -->
+  <section>
+    <h2>🌟 Zusatz: Mini-Check</h2>
+
+    <p>
+      Entscheide, ob der Satz richtig oder falsch ist.
+    </p>
+
+    <div id="miniCheck"></div>
+  </section>
+
+  <!-- VOCAB -->
+  <section>
+    <h2>📚 Vokabelliste</h2>
+
+    <p>
+      Alle Wörter aus den Übungen sind hier noch einmal geordnet.
+    </p>
+
+    <h3>Personen und Familie</h3>
+    <table>
+      <tr>
+        <th>Französisch</th>
+        <th>Deutsch</th>
+      </tr>
+      <tr><td>ma famille</td><td>meine Familie</td></tr>
+      <tr><td>ma mère</td><td>meine Mutter</td></tr>
+      <tr><td>mon père</td><td>mein Vater</td></tr>
+      <tr><td>mon frère</td><td>mein Bruder</td></tr>
+      <tr><td>ma sœur</td><td>meine Schwester</td></tr>
+      <tr><td>mes parents</td><td>meine Eltern</td></tr>
+      <tr><td>mon cousin</td><td>mein Cousin</td></tr>
+      <tr><td>ma cousine</td><td>meine Cousine</td></tr>
+    </table>
+
+    <h3>Verben</h3>
+    <table>
+      <tr>
+        <th>Infinitiv</th>
+        <th>Deutsch</th>
+        <th>Beispiele</th>
+      </tr>
+      <tr>
+        <td>aimer</td>
+        <td>lieben, mögen</td>
+        <td>j’aime, tu aimes, il aime</td>
+      </tr>
+      <tr>
+        <td>parler</td>
+        <td>sprechen</td>
+        <td>je parle, tu parles, elle parle</td>
+      </tr>
+      <tr>
+        <td>jouer</td>
+        <td>spielen</td>
+        <td>je joue, tu joues, il joue</td>
+      </tr>
+      <tr>
+        <td>regarder</td>
+        <td>anschauen</td>
+        <td>je regarde, elle regarde</td>
+      </tr>
+      <tr>
+        <td>écouter</td>
+        <td>zuhören, anhören</td>
+        <td>j’écoute, il écoute</td>
+      </tr>
+      <tr>
+        <td>être</td>
+        <td>sein</td>
+        <td>je suis, tu es, il est, elle est</td>
+      </tr>
+    </table>
+
+    <h3>Adjektive und andere Wörter</h3>
+    <table>
+      <tr>
+        <th>Französisch</th>
+        <th>Deutsch</th>
+      </tr>
+      <tr><td>sympa</td><td>nett</td></tr>
+      <tr><td>gentil / gentille</td><td>freundlich, nett</td></tr>
+      <tr><td>la photo</td><td>das Foto</td></tr>
+      <tr><td>à la maison</td><td>zu Hause</td></tr>
+      <tr><td>avec</td><td>mit</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>👩‍🏫 Hinweis für die Lehrkraft</h2>
+    <div class="teacher-note">
+      <p>
+        Die Anwendung ist bewusst kleinschrittig aufgebaut:
+      </p>
+      <ol>
+        <li>Erst wird das konjugierte Verb gesichert.</li>
+        <li>Dann werden <em>ne</em> und <em>pas</em> als zwei Teile der Verneinung erkannt.</li>
+        <li>Erst danach erfolgt das produktive Einsetzen.</li>
+        <li>Die Apostroph-Regel <em>n'</em> wird isoliert geübt.</li>
+        <li>Deutsch-französische Zuordnung bereitet die eigene Übersetzung vor.</li>
+      </ol>
+      <p>
+        Für eine sehr leistungsschwache Lerngruppe kann man die Aufgaben abschnittsweise gemeinsam am Beamer bearbeiten.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Erstellt für eine Vertretungsstunde Französisch Klasse 7 · Thema: ne ... pas
+</footer>
+
+<script>
+  function normalize(str) {
+    return str
+      .toLowerCase()
+      .trim()
+      .replace(/[’]/g, "'")
+      .replace(/\s+/g, " ")
+      .replace(/[.!?]/g, "");
+  }
+
+  // Übung 1
+  const verbTasks = [
+    {
+      words: ["Je", "parle", "avec", "ma", "mère."],
+      answer: "parle",
+      hint: "Was tue ich? Ich spreche."
+    },
+    {
+      words: ["Mon", "père", "joue", "à", "la", "maison."],
+      answer: "joue",
+      hint: "Was tut mein Vater? Er spielt."
+    },
+    {
+      words: ["Ma", "sœur", "regarde", "la", "photo."],
+      answer: "regarde",
+      hint: "Was tut meine Schwester? Sie schaut an."
+    },
+    {
+      words: ["Mon", "frère", "est", "sympa."],
+      answer: "est",
+      hint: "Wie ist mein Bruder? Er ist nett."
+    },
+    {
+      words: ["J'", "écoute", "mes", "parents."],
+      answer: "écoute",
+      hint: "Was tue ich? Ich höre zu."
+    }
+  ];
+
+  const verbContainer = document.getElementById("verbTasks");
+
+  verbTasks.forEach((task, index) => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `<strong>Satz ${index + 1}:</strong><br>`;
+    task.words.forEach(word => {
+      const btn = document.createElement("button");
+      btn.className = "word-btn";
+      btn.textContent = word;
+      btn.onclick = () => {
+        const clean = word.replace(/[.']/g, "");
+        if (clean === task.answer || word.replace(/[.]/g, "") === task.answer) {
+          btn.classList.add("selected");
+          feedback.textContent = "Richtig! Das ist das konjugierte Verb.";
+          feedback.className = "feedback correct";
+        } else {
+          btn.classList.add("wrong");
+          feedback.textContent = "Noch nicht. Tipp: " + task.hint;
+          feedback.className = "feedback incorrect";
+        }
+      };
+      div.appendChild(btn);
+    });
+    const feedback = document.createElement("p");
+    feedback.className = "feedback";
+    div.appendChild(feedback);
+    verbContainer.appendChild(div);
+  });
+
+  // Übung 2
+  const nePasTasks = [
+    ["Je", "ne", "parle", "pas", "avec", "mon", "père."],
+    ["Elle", "n'", "aime", "pas", "la", "photo."],
+    ["Mon", "frère", "ne", "joue", "pas."],
+    ["Ma", "mère", "n'", "est", "pas", "à", "la", "maison."],
+    ["Nous", "ne", "regardons", "pas", "la", "photo."]
+  ];
+
+  const nePasContainer = document.getElementById("nePasTasks");
+
+  nePasTasks.forEach((words, index) => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `<strong>Satz ${index + 1}:</strong><br>`;
+    let found = 0;
+
+    words.forEach(word => {
+      const btn = document.createElement("button");
+      btn.className = "word-btn";
+      btn.textContent = word;
+      btn.onclick = () => {
+        const clean = word.replace(/[.]/g, "");
+        if (clean === "ne" || clean === "pas" || clean === "n'") {
+          if (!btn.classList.contains("selected")) {
+            found++;
+          }
+          btn.classList.add("selected");
+          if (found >= 2) {
+            feedback.textContent = "Sehr gut! Du hast beide Teile der Verneinung gefunden.";
+            feedback.className = "feedback correct";
+          } else {
+            feedback.textContent = "Gut! Finde jetzt noch den zweiten Teil.";
+            feedback.className = "feedback correct";
+          }
+        } else {
+          btn.classList.add("wrong");
+          feedback.textContent = "Das ist nicht ne/n' oder pas.";
+          feedback.className = "feedback incorrect";
+        }
+      };
+      div.appendChild(btn);
+    });
+
+    const feedback = document.createElement("p");
+    feedback.className = "feedback";
+    div.appendChild(feedback);
+    nePasContainer.appendChild(div);
+  });
+
+  // Übung 3 Drag & Drop / Click
+  const dragTasks = [
+    {
+      before: ["Je", "__", "parle", "__", "avec ma mère."],
+      answer: ["ne", "pas"]
+    },
+    {
+      before: ["Mon père", "__", "joue", "__", "à la maison."],
+      answer: ["ne", "pas"]
+    },
+    {
+      before: ["Ma sœur", "__", "regarde", "__", "la photo."],
+      answer: ["ne", "pas"]
+    },
+    {
+      before: ["Tu", "__", "parles", "__", "avec mon frère."],
+      answer: ["ne", "pas"]
+    }
+  ];
+
+  let selectedDragWord = null;
+
+  function createDragTasks() {
+    const container = document.getElementById("dragTasks");
+
+    dragTasks.forEach((task, index) => {
+      const div = document.createElement("div");
+      div.className = "task";
+      div.innerHTML = `<strong>Satz ${index + 1}:</strong><br>`;
+
+      const sentence = document.createElement("p");
+
+      let dropIndex = 0;
+      const zones = [];
+
+      task.before.forEach(part => {
+        if (part === "__") {
+          const zone = document.createElement("span");
+          zone.className = "drop-zone";
+          zone.textContent = "___";
+          zone.dataset.correct = task.answer[dropIndex];
+          zone.ondragover = e => e.preventDefault();
+          zone.ondrop = e => {
+            e.preventDefault();
+            const word = e.dataTransfer.getData("text/plain");
+            fillZone(zone, word, feedback, zones);
+          };
+          zone.onclick = () => {
+            if (selectedDragWord) {
+              fillZone(zone, selectedDragWord, feedback, zones);
+              selectedDragWord = null;
+            }
+          };
+          zones.push(zone);
+          sentence.appendChild(zone);
+          dropIndex++;
+        } else {
+          sentence.append(" " + part + " ");
+        }
+      });
+
+      div.appendChild(sentence);
+
+      const dragArea = document.createElement("div");
+      dragArea.className = "drag-area";
+      ["ne", "pas"].forEach(word => {
+        const item = document.createElement("span");
+        item.className = "drag-item";
+        item.draggable = true;
+        item.textContent = word;
+        item.ondragstart = e => {
+          e.dataTransfer.setData("text/plain", word);
+        };
+        item.onclick = () => {
+          selectedDragWord = word;
+          feedback.textContent = `"${word}" ausgewählt. Klicke jetzt auf eine Lücke.`;
+          feedback.className = "feedback";
+        };
+        dragArea.appendChild(item);
+      });
+
+      div.appendChild(dragArea);
+
+      const feedback = document.createElement("p");
+      feedback.className = "feedback";
+      div.appendChild(feedback);
+      container.appendChild(div);
+    });
+  }
+
+  function fillZone(zone, word, feedback, zones) {
+    zone.textContent = word;
+    zone.dataset.value = word;
+    zone.classList.add("filled");
+
+    const allFilled = zones.every(z => z.dataset.value);
+    if (allFilled) {
+      const ok = zones.every(z => z.dataset.value === z.dataset.correct);
+      if (ok) {
+        feedback.textContent = "Richtig! ne steht vor dem Verb, pas steht nach dem Verb.";
+        feedback.className = "feedback correct";
+      } else {
+        feedback.textContent = "Noch nicht richtig. Tipp: ne steht vor dem Verb, pas danach.";
+        feedback.className = "feedback incorrect";
+      }
+    }
+  }
+
+  createDragTasks();
+
+  // Übung 4
+  const neOrNTasks = [
+    {
+      sentence: "Je ___ aime pas ma sœur.",
+      correct: "n'",
+      explanation: "aime beginnt mit a. Deshalb: n’aime pas."
+    },
+    {
+      sentence: "Je ___ parle pas avec mon père.",
+      correct: "ne",
+      explanation: "parle beginnt mit p. Deshalb: ne parle pas."
+    },
+    {
+      sentence: "Elle ___ est pas gentille.",
+      correct: "n'",
+      explanation: "est beginnt mit e. Deshalb: n’est pas."
+    },
+    {
+      sentence: "Mon frère ___ joue pas.",
+      correct: "ne",
+      explanation: "joue beginnt mit j. Deshalb: ne joue pas."
+    },
+    {
+      sentence: "Tu ___ écoutes pas ta mère.",
+      correct: "n'",
+      explanation: "écoutes beginnt mit é. Deshalb: n’écoutes pas."
+    }
+  ];
+
+  const neOrNContainer = document.getElementById("neOrNTasks");
+
+  neOrNTasks.forEach((task, index) => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `<strong>${index + 1}. ${task.sentence}</strong><br>`;
+
+    ["ne", "n'"].forEach(choice => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.textContent = choice;
+      btn.onclick = () => {
+        if (choice === task.correct) {
+          feedback.textContent = "Richtig! " + task.explanation;
+          feedback.className = "feedback correct";
+        } else {
+          feedback.textContent = "Noch nicht. " + task.explanation;
+          feedback.className = "feedback incorrect";
+        }
+      };
+      div.appendChild(btn);
+    });
+
+    const feedback = document.createElement("p");
+    feedback.className = "feedback";
+    div.appendChild(feedback);
+    neOrNContainer.appendChild(div);
+  });
+
+  // Übung 5 Matching
+  const pairs = [
+    {
+      id: 1,
+      de: "Ich spreche mit meiner Mutter.",
+      fr: "Je parle avec ma mère."
+    },
+    {
+      id: 2,
+      de: "Ich spreche nicht mit meiner Mutter.",
+      fr: "Je ne parle pas avec ma mère."
+    },
+    {
+      id: 3,
+      de: "Mein Bruder spielt.",
+      fr: "Mon frère joue."
+    },
+    {
+      id: 4,
+      de: "Mein Bruder spielt nicht.",
+      fr: "Mon frère ne joue pas."
+    },
+    {
+      id: 5,
+      de: "Sie ist nett.",
+      fr: "Elle est gentille."
+    },
+    {
+      id: 6,
+      de: "Sie ist nicht nett.",
+      fr: "Elle n’est pas gentille."
+    },
+    {
+      id: 7,
+      de: "Ich liebe meine Familie.",
+      fr: "J’aime ma famille."
+    },
+    {
+      id: 8,
+      de: "Ich liebe meine Familie nicht.",
+      fr: "Je n’aime pas ma famille."
+    }
+  ];
+
+  const shuffledFr = [...pairs].sort(() => Math.random() - 0.5);
+
+  let selectedGerman = null;
+  let selectedFrench = null;
+  let matchesDone = 0;
+
+  const germanCards = document.getElementById("germanCards");
+  const frenchCards = document.getElementById("frenchCards");
+  const matchFeedback = document.getElementById("matchFeedback");
+
+  pairs.forEach(pair => {
+    const card = document.createElement("div");
+    card.className = "match-card";
+    card.textContent = pair.de;
+    card.dataset.id = pair.id;
+    card.onclick = () => selectGerman(card);
+    germanCards.appendChild(card);
+  });
+
+  shuffledFr.forEach(pair => {
+    const card = document.createElement("div");
+    card.className = "match-card";
+    card.textContent = pair.fr;
+    card.dataset.id = pair.id;
+    card.onclick = () => selectFrench(card);
+    frenchCards.appendChild(card);
+  });
+
+  function selectGerman(card) {
+    if (card.classList.contains("done")) return;
+    document.querySelectorAll("#germanCards .match-card").forEach(c => c.classList.remove("active"));
+    card.classList.add("active");
+    selectedGerman = card;
+    checkMatch();
+  }
+
+  function selectFrench(card) {
+    if (card.classList.contains("done")) return;
+    document.querySelectorAll("#frenchCards .match-card").forEach(c => c.classList.remove("active"));
+    card.classList.add("active");
+    selectedFrench = card;
+    checkMatch();
+  }
+
+  function checkMatch() {
+    if (selectedGerman && selectedFrench) {
+      if (selectedGerman.dataset.id === selectedFrench.dataset.id) {
+        selectedGerman.classList.remove("active");
+        selectedFrench.classList.remove("active");
+        selectedGerman.classList.add("done");
+        selectedFrench.classList.add("done");
+        selectedGerman = null;
+        selectedFrench = null;
+        matchesDone++;
+        matchFeedback.textContent = "Richtig zugeordnet!";
+        matchFeedback.className = "feedback correct";
+        if (matchesDone === pairs.length) {
+          matchFeedback.textContent = "Super! Alle Paare sind richtig.";
+        }
+      } else {
+        matchFeedback.textContent = "Das passt noch nicht. Suche nach der Bedeutung und nach „nicht“ / ne ... pas.";
+        matchFeedback.className = "feedback incorrect";
+        setTimeout(() => {
+          if (selectedGerman) selectedGerman.classList.remove("active");
+          if (selectedFrench) selectedFrench.classList.remove("active");
+          selectedGerman = null;
+          selectedFrench = null;
+        }, 900);
+      }
+    }
+  }
+
+  // Übung 6 Translation
+  const translationTasks = [
+    {
+      de: "Ich spreche nicht.",
+      answers: ["je ne parle pas"]
+    },
+    {
+      de: "Mein Bruder spielt nicht.",
+      answers: ["mon frère ne joue pas", "mon frere ne joue pas"]
+    },
+    {
+      de: "Ich liebe meine Familie nicht.",
+      answers: ["je n'aime pas ma famille", "je n’aime pas ma famille"]
+    },
+    {
+      de: "Sie ist nicht nett.",
+      answers: ["elle n'est pas gentille", "elle n’est pas gentille"]
+    },
+    {
+      de: "Du hörst deiner Mutter nicht zu.",
+      answers: ["tu n'écoutes pas ta mère", "tu n’écoutes pas ta mère", "tu n'ecoutes pas ta mere"]
+    }
+  ];
+
+  const translationContainer = document.getElementById("translationTasks");
+
+  translationTasks.forEach((task, index) => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `
+      <strong>${index + 1}. ${task.de}</strong><br>
+      <input type="text" placeholder="Schreibe den französischen Satz hier ..." />
+      <br>
+    `;
+
+    const input = div.querySelector("input");
+    const btn = document.createElement("button");
+    btn.textContent = "Prüfen";
+
+    const showBtn = document.createElement("button");
+    showBtn.textContent = "Lösung zeigen";
+
+    const feedback = document.createElement("p");
+    feedback.className = "feedback";
+
+    btn.onclick = () => {
+      const user = normalize(input.value);
+      const isCorrect = task.answers.map(normalize).includes(user);
+      if (isCorrect) {
+        feedback.textContent = "Richtig!";
+        feedback.className = "feedback correct";
+      } else {
+        feedback.textContent = "Noch nicht. Prüfe: Verb finden → ne/n' davor → pas danach.";
+        feedback.className = "feedback incorrect";
+      }
+    };
+
+    showBtn.onclick = () => {
+      feedback.textContent = "Mögliche Lösung: " + task.answers[0] + ".";
+      feedback.className = "feedback";
+    };
+
+    div.appendChild(btn);
+    div.appendChild(showBtn);
+    div.appendChild(feedback);
+    translationContainer.appendChild(div);
+  });
+
+  // Mini Check
+  const miniCheckTasks = [
+    {
+      sentence: "Je ne parle pas.",
+      correct: true,
+      expl: "Richtig: ne steht vor parle, pas steht danach."
+    },
+    {
+      sentence: "Je parle ne pas.",
+      correct: false,
+      expl: "Falsch: ne muss vor das konjugierte Verb."
+    },
+    {
+      sentence: "Elle n’est pas gentille.",
+      correct: true,
+      expl: "Richtig: est beginnt mit Vokal, daher n’."
+    },
+    {
+      sentence: "Mon frère n’joue pas.",
+      correct: false,
+      expl: "Falsch: joue beginnt mit j, also: ne joue pas."
+    }
+  ];
+
+  const miniCheckContainer = document.getElementById("miniCheck");
+
+  miniCheckTasks.forEach((task, index) => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `<strong>${index + 1}. <span class="fr">${task.sentence}</span></strong><br>`;
+
+    const trueBtn = document.createElement("button");
+    trueBtn.textContent = "richtig";
+
+    const falseBtn = document.createElement("button");
+    falseBtn.textContent = "falsch";
+
+    const feedback = document.createElement("p");
+    feedback.className = "feedback";
+
+    trueBtn.onclick = () => {
+      if (task.correct) {
+        feedback.textContent = "Ja! " + task.expl;
+        feedback.className = "feedback correct";
+      } else {
+        feedback.textContent = "Nein. " + task.expl;
+        feedback.className = "feedback incorrect";
+      }
+    };
+
+    falseBtn.onclick = () => {
+      if (!task.correct) {
+        feedback.textContent = "Ja! " + task.expl;
+        feedback.className = "feedback correct";
+      } else {
+        feedback.textContent = "Nein. " + task.expl;
+        feedback.className = "feedback incorrect";
+      }
+    };
+
+    div.appendChild(trueBtn);
+    div.appendChild(falseBtn);
+    div.appendChild(feedback);
+    miniCheckContainer.appendChild(div);
+  });
+</script>
+
+</body>
+</html>
